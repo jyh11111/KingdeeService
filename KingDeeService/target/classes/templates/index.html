@@ -1,0 +1,747 @@
+<#assign basePath=request.contextPath> <!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>金碟采购物料查询</title>
+<link rel="stylesheet" href="${basePath!}/layui/css/layui.css">
+<style>
+header {
+	/*   background-color: #0c0; */
+	height: 50px;
+	position: relative;
+	border-bottom: 2px solid #caa2a2;
+	color: blue;
+}
+
+.title {
+	line-height: 50px;
+	position: relative;
+	left: 50px;
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.leftparam {
+	border: 1px solid #ccc;
+	margin-left: -10px;
+}
+
+#context {
+	backgorund-color: #ccc;
+}
+
+.layui-tab-content {
+	padding: 10px 0 10px 0;
+}
+
+form .layui-form-item {
+	margin-bottom: -1px;
+}
+
+.layui-table-header table thead tr th {
+	color: red;
+	font-size: 12px;
+}
+</style>
+</head>
+
+<body>
+	<div class="layui-container">
+		<!-- layui-container-->
+		<header>
+			<div class='title' style='float: left'>采购物料查询</div>
+			<form class='layui-form' style="float: right; margin-top: 5px">
+				<div class="layui-form-item">
+					<label for="">选择帐套</label>
+					<div class="layui-inline">
+						<select id="dsSel" lay-filter="dsSel">
+							<option value="">请选择</option>
+							<option value="1" selected>麻涌</option>
+							<option value="2">桑园</option>
+							<option value="3">域嘉</option>
+							<!-- <option value="4">香港精密</option>
+								<option value="5">香港玩具</option>
+								<option value="6">金塘</option>
+								<option value="7">美昌</option> -->
+						</select>
+					</div>
+				</div>
+			</form>
+		</header>
+		<div id="context">
+			<div class="layui-card">
+				<div class="layui-card-header layui-hide">
+					查询表头 <span style="font-size: 10px; font-style: italic; color: red">
+						目前仅支持麻涌 [培训实操]帐套</span>
+				</div>
+				<div class="layui-card-body">
+					<form class="layui-form" id='queryForm' action="">
+						<div class="layui-form-item">
+							<label class="layui-form-label">选择参数</label>
+							<div class="layui-inline">
+								<select name="nwx" lay-verify="required" lay-filter="product">
+									<option value="">请选择内外销</option>
+									<option value="11" selected>精密外销-11</option>
+									<option value="12">精密MC内销 -12</option>
+									<option value="13">精密GG内销-13</option>
+									<option value="14">精密VG内销-14</option>
+									<option value="15">精密SY内销-15</option>
+									<option value="16" disabled> 备用-16</option>
+									<option value="17" disabled> 备用-17</option>
+									<option value="18" disabled> 备用-18</option>
+									<option value="19"  > 其他客户内销委托加工-19</option>
+
+									<option value="21">玩具外销 -21</option>
+									<option value="22">玩具MC内销 -22</option>
+									<option value="23">玩具MC内销受托加工-23</option>
+								</select>
+							</div>
+							<div class="layui-inline">
+								<select name="producttype" lay-filter="product">
+									<option value="">请选择内类型</option>
+									<option value="1" disabled="">销售产品-1</option>
+									<option value="2" disabled="">半成品-2</option>
+									<option value="3" selected>采购件-3</option>
+									<option value="4" disabled="">采购物料-经过后加工序-4</option>
+								</select>
+							</div>
+							<div class="layui-inline">
+								<select name="productdtl" lay-filter="product">
+									<option value="">请选择类型</option>
+									<option value="1">胶料-1</option>
+									<option value="2">色粉-2</option>
+									<option value="3">色种-3</option>
+									<option value="4">马达-4</option>
+									<option value="5">机械-5</option>
+									<option value="6">电子-6</option>
+									<option value="7">包装/纸品-7</option>
+									<option value="8">化工辅料及其它-8</option>
+									<option value="9">力嘉注塑件/产品-9</option>
+								</select>
+							</div>
+						</div>
+						<hr style='margin: 2px 0'>
+						<div class="layui-tab layui-tab-card" lay-filter="tab1">
+							<ul class="layui-tab-title">
+								<li class="layui-this" lay-id="tab_1">属性查询</li>
+								<li class="" lay-id='tab_2'>编号查询</li>
+							</ul>
+							<div class="layui-tab-content">
+								<div class="layui-tab-item  layui-show">
+									<!-- 下面为属性 -->
+									<div class="layui-form-item">
+										<label class="layui-form-label">类型 </label>
+										<div class="layui-input-inline">
+											<select name="Ptype" id="ptype" lay-filter="ptype">
+												<option value="">请选择子类</option>
+											</select>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">属性1</label>
+										<div class="layui-input-inline" style="width: 200px;">
+											<input type="text" id='F1' name="F1" placeholder="属性名"
+												readonly autocomplete="off" class="layui-input "
+												style="border-width: 0 0 1px 0">
+										</div>
+										<div class="layui-form-mid">=</div>
+										<div class="layui-input-inline" id='divV1'
+											style="width: 200px;">
+											<input type="text" name="V1" placeholder="值"
+												autocomplete="on" class="layui-input " />
+										</div>
+										<label class="layui-form-label">属性4</label>
+										<div class="layui-input-inline" style="width: 200px;">
+											<input type="text" name="F4" placeholder="属性名" readonly
+												autocomplete="off" class="layui-input"
+												style="border-width: 0 0 1px 0">
+										</div>
+										<div class="layui-form-mid">=</div>
+										<div class="layui-input-inline" id='divV4'
+											style="width: 200px;">
+											<input type="text" name="V4" placeholder="值"
+												autocomplete="on" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">属性2</label>
+										<div class="layui-input-inline" style="width: 200px;">
+											<input type="text" name="F2" placeholder="属性名" readonly
+												autocomplete="off" class="layui-input"
+												style="border-width: 0 0 1px 0">
+										</div>
+										<div class="layui-form-mid">=</div>
+										<div class="layui-input-inline" id='divV2'
+											style="width: 200px;">
+											<input type="text" name="V2" placeholder="值"
+												autocomplete="on" class="layui-input">
+										</div>
+										<label class="layui-form-label">属性5</label>
+										<div class="layui-input-inline" style="width: 200px;">
+											<input type="text" name="F5" placeholder="属性名" readonly
+												autocomplete="off" class="layui-input"
+												style="border-width: 0 0 1px 0">
+										</div>
+										<div class="layui-form-mid">=</div>
+										<div class="layui-input-inline" id='divV5'
+											style="width: 200px;">
+											<input type="text" name="V5" placeholder="值"
+												autocomplete="on" class="layui-input">
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<label class="layui-form-label">属性3</label>
+										<div class="layui-input-inline" style="width: 200px;">
+											<input type="text" name="F3" placeholder="属性名" readonly
+												autocomplete="off" class="layui-input"
+												style="border-width: 0 0 1px 0">
+										</div>
+										<div class="layui-form-mid">=</div>
+										<div class="layui-input-inline" id='divV3'
+											style="width: 200px;">
+											<input type="text" name="V3" placeholder="值"
+												autocomplete="on" class="layui-input" />
+										</div>
+										<div class="layui-inline">
+											<label class="layui-form-label">属性6</label>
+											<div class="layui-input-inline" style="width: 200px;">
+												<input type="text" name="F6" placeholder="属性名" readonly
+													autocomplete="off" class="layui-input"
+													style="border-width: 0 0 1px 0">
+											</div>
+											<div class="layui-form-mid">=</div>
+											<div class="layui-input-inline" id='divV6'
+												style="width: 200px;">
+												<input type="text" name="V6" placeholder="值"
+													autocomplete="on" class="layui-input">
+											</div>
+										</div>
+									</div>
+									<div class="layui-form-item layui-hide" id="div_sup">
+										<label class="layui-form-label">供应商</label>
+										<div class="layui-input-inline" style="width: 200px;">
+											<select name="supply" id="supply" lay-search="">
+												<option value="">供应商类</option>
+												<#list
+													[ 'A', 'B', 'C', 'CP', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+													as item>
+												<option value="${item}">${item}</option>
+												</#list>
+											</select>
+										</div>
+										<div class="layui-form-mid">=</div>
+										<div class="layui-input-inline" id='divV3'
+											style="width: 200px;">
+											<input type="text" name="supplyord" placeholder="供应商号 eg:15"
+												autocomplete="on" class="layui-input" />
+										</div>
+									</div>
+								</div>
+								<div class="layui-tab-item">
+									<div class="layui-form-item">
+										<div class="layui-inline">
+											<label class="layui-form-label">编号 * </label>
+											<div class="layui-input-block">
+												<input type="text" name="FShortNumber" placeholder=""
+													autocomplete="on" class="layui-input">
+											</div>
+										</div>
+									</div>
+									<div class="layui-form-item">
+										<div class="layui-inline">
+											<label class="layui-form-label">E8 P/N * </label>
+											<div class="layui-input-block">
+												<input type="text" name="E8PN" placeholder=""
+													autocomplete="on" class="layui-input">
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+						<button class="layui-btn layui-btn-normal"
+							style="width: 120px; position: absolute; top: 110px; left: 354px;"
+							lay-submit lay-filter="*" onclick="javascript:void(0);">查询</button>
+					</form>
+				</div>
+			</div>
+			<div class='layui-row'>
+				<table id="demo" lay-filter="test"></table>
+			</div>
+		</div>
+	</div>
+	<script src="${basePath!}/layui/layui.js"></script>
+	<script src="config.js" type="text/javascript"></script>
+	<script>
+        //一般直接写在一个js文件中
+        layui.use(
+            ['layer', 'table', 'form', 'jquery', 'element'],
+            function() {
+                var layer = layui.layer,
+                    form = layui.form;
+                var table = layui.table;
+                var $ = layui.jquery;
+                var element = layui.element;
+                var init_table_data=true; //当更换查询条件时要置为true,当按了查询后将其更换为false
+                						 //当其为true时查询第一页，当为false时可能是第一页或不是	
+               	var datasource="master";//默认为master
+                var defcols = [
+                    [{
+                            type: 'numbers',
+                            fixed: 'left'
+                        }, //自增序号
+                        /* 	 {
+                        		field : 'FItemID',
+                        		title : 'FItemId',
+                        		width : 120,
+                        		sort : true,
+                        		width:0,
+                        		
+                        	}  ,*/
+                        {
+                            field: 'fnumber',
+                            title: '物料编号',
+                            width: 175,
+                            sort: true,
+                        }, {
+                            field: 'fname',
+                            title: '物料名称',
+                            width: 180,
+                            sort: true
+                        }, {
+                            field: 'v1',
+                            title: '属性1',
+                            sort: true
+                            /*  width : 300,*/
+                        }, {
+                            field: 'v2',
+                            title: '属性2',
+                            sort: true
+                            /*  width : 300,*/
+                        }, {
+                            field: 'v3',
+                            title: '属性3',
+                            sort: true
+                            /*  width : 300,*/
+                        }, {
+                            field: 'v4',
+                            title: '属性4',
+                            sort: true
+                            /*  width : 300,*/
+                        }, {
+                            field: 'v5',
+                            title: '属性5',
+                            sort: true
+                            /*  width : 300,*/
+                        }, {
+                            field: 'v6',
+                            title: '属性6',
+                            sort: true
+                            /*  width : 300,*/
+                        }, {
+                            field: 'supplyName', //供应商
+                            title: '供应商',
+                            sort: true
+                        }, {
+                            field: 'f_108',
+                            title: 'E8 P/N',
+                            width: 100,
+                        }, {
+                            field: 'f_109',
+                            title: 'E10 P/N',
+                            width: 100,
+                        }
+                    ]
+                ]
+                //第一个实例
+                var parttable = table.render({
+
+                    elem: '#demo',
+                    //height : 400,
+                    url: '/query/page2', //数据接口					
+                    page: true, //开启分页
+                    request: {
+                        pageName: 'current' //页码的参数名称，默认：page
+                            ,
+                        limitName: 'size' //每页数据量的参数名，默认：limit
+                        ,datasource:datasource
+                    },
+                    cols: defcols,
+                });
+                var typestr = ""; //保存存 *.3.2这种字串
+                //点击事件
+                form.on(
+                    "select(product)",
+                    function(data) {
+                        var t1 = $('select[name="nwx"]')
+                            .val(),
+                            t2 = $(
+                                'select[name="producttype"]')
+                            .val(),
+                            t3 = $(
+                                'select[name="productdtl"]')
+                            .val();
+
+                        $('select[name="Ptype"]')
+                            .empty();
+                        init_table_data=true;
+                        $('input[name^="F"]').val("")
+                        $('input[name="supplyord"]').val("")
+                        $('select[name="supply"]').val("")
+                        $('input[name="E8PN"]').val("")
+                        //先全部初始化为input框 //$('input[name^="V"]').val("");这个不用了
+                        initInput();
+
+                        form.render('select');
+                        if (t1 && t2 && t3) {
+                            typestr = '*' + '.' + t2 +
+                                '.' + t3;
+                            //console.log(typestr)
+
+                            var c1 = config[typestr];
+                            if (c1) {
+                                $(
+                                        'select[name="Ptype"]')
+                                    .append(
+                                        '<option value="">请选择子类</option>')
+                                for (j = 0,
+                                    len = c1.length; j < len; j++) {
+                                    $(
+                                            'select[name="Ptype"]')
+                                        .append(
+                                            '<option value="' + c1[j].ptype + '"">' +
+                                            c1[j].ptype +
+                                            '</option>')
+                                }
+
+                            }
+                        }
+
+                        switch (t3) {
+                            case "1": //原料
+                                element.tabChange('tab1',
+                                    'tab_2');
+                                $('li[lay-id="tab_1"]')
+                                    .css('display',
+                                        'none');
+                                element.render('tab');
+                                $('#div_sup').addClass(
+                                    'layui-hide')
+                                break;
+                            case "4": //马达
+                                element.tabChange('tab1',
+                                    'tab_1');
+                                $('li[lay-id="tab_1"]')
+                                    .removeAttr('style');
+                                $('#div_sup').removeClass(
+                                    'layui-hide')
+
+                                break;
+                            default:
+                                element.tabChange('tab1',
+                                    'tab_1');
+                                $('li[lay-id="tab_1"]')
+                                    .removeAttr('style');
+                                $('#div_sup').addClass(
+                                    'layui-hide')
+                        }
+
+                        form.render('select');
+
+                    })
+                //子类选择后更改
+                form.on(
+                    "select(ptype)",
+                    function(data) {
+                        var ptype = data.value;
+
+                        var c1 = config[typestr];
+                        var found;
+                        $('input[name^="F"]').val("");
+                        $('input[name="supplyord"]')
+                            .val("")
+                         $('input[name="E8PN"]').val("")
+                        //先全部初始化为input框 //$('input[name^="V"]').val("");这个不用了
+                        init_table_data=true;
+                        initInput();
+
+                        if (c1) {
+                            found = c1
+                                .find(function(
+                                    currentValue,
+                                    index, arr) {
+                                    return currentValue.ptype == ptype;
+                                })
+
+                        }
+
+                        if (found) {
+                            for (
+                                i = 0,
+                                len = found.prop.length; i < len; i++) {
+
+                                $(
+                                        'input[name="F' +
+                                        (i + 1) +
+                                        '"]')
+                                    .val(
+                                        found.prop[i]['key']);
+
+                                fillSelect(
+                                    found.prop[i].values,
+                                    i + 1);
+                            }
+                            form.render('select');
+                        }
+
+                    });
+                //阻止提交
+
+                form.on(
+                    'submit(*)',
+                    function(data) {
+                        //console.log(data.elem) //被执行事件的元素DOM对象，一般为button对象
+                        //console.log(data.form) //被执行提交的form对象，一般在存在form标签时才会返回
+                        //console.log(data.field) //当前容器的全部表单字段，名值对形式：{name: value}
+                        //
+                      
+                        if (data.field.nwx &&
+                            data.field.producttype &&
+                            data.field.productdtl) {
+                            data.field.FNumber = data.field.nwx +
+                                '.' +
+                                data.field.producttype +
+                                '.' +
+                                data.field.productdtl
+                        }
+                        //alert(typestr) =*.3.4
+                        var curptype = $('select#ptype').val();
+                        var options = {}
+                        window.t1 = '属性1', window.t2 = '属性2', window.t3 = '属性3', window.t4 = '属性4', window.t5 = '属性5', window.t6 = '属性6'
+                        if (curptype) { //如果有ptype则																						 
+                            var c = config[typestr];
+                            var found = c
+                                .find(function(
+                                    currentValue,
+                                    index, arr) {
+                                    return currentValue.ptype == curptype;
+                                })
+                            if (found) {
+                                for (i = 0; i < found.prop.length; i++) {
+                                    window['t' +
+                                        (i + 1)] = found.prop[i].key;
+
+                                }
+                            }
+
+                        }
+                        window.newcols = [
+                            [{
+                                    type: 'numbers',
+                                    fixed: 'left'
+                                }, //自增序号
+                                /* 	 {
+                                		field : 'FItemID',
+                                		title : 'FItemId',
+                                		width : 120,
+                                		sort : true,
+                                		width:0,
+                                		
+                                	}  ,*/
+                                {
+                                    field: 'fnumber',
+                                    title: '物料编号',
+                                    width: 165,
+                                    sort: true,
+                                    templet:function(d){
+                                    	return "<a href='javascript:void(0)' style='color:blue' onclick='jumppartshow(\""+d.fnumber +"\",\""+datasource+"\")'>"+d.fnumber+"</a>"
+                                    },
+                                }, {
+                                    field: 'fname',
+                                    title: '物料名称',
+                                    width: 160,
+                                    sort: true
+                                }, {
+                                    field: 'v1',
+                                    title: window.t1,
+                                    sort: true,
+                                    minWidth:100
+                                    /*  width : 300,*/
+                                }, {
+                                    field: 'v2',
+                                    title: window.t2,
+                                    sort: true,
+                                    minWidth:100
+                                    /*  width : 300,*/
+                                }, {
+                                    field: 'v3',
+                                    title: window.t3,
+                                    sort: true,
+                                    minWidth:100
+                                    /*  width : 300,*/
+                                }, {
+                                    field: 'v4',
+                                    title: window.t4,
+                                    sort: true,
+                                    minWidth:100
+                                    /*  width : 300,*/
+                                }, {
+                                    field: 'v5',
+                                    title: window.t5,
+                                    sort: true,
+                                    minWidth:100
+                                    /*  width : 300,*/
+                                }, {
+                                    field: 'v6',
+                                    title: window.t6,
+                                    sort: true,
+                                    minWidth:100
+                                    /*  width : 300,*/
+                                }, {
+                                    field: 'supplyName', //供应商
+                                    title: '供应商',
+                                    sort: true
+                                   
+                                }, {
+                                    field: 'e8PN',//f_108
+                                    title: 'E8 P/N',
+                                    width: 126,
+                                }, {
+                                    field: 'e10PN', //f_109
+                                    title: 'E10 P/N',
+                                    width: 80,
+                                }
+                            ]
+                        ]
+                        data.field.datasource=datasource
+                        options = {
+                            url: "/query/page2",
+                            where: data.field,
+                            cols: window.newcols,
+                        }
+						if (init_table_data)
+						{ options.page={curr: 1}};
+						
+                        parttable.reload(options); 
+                        init_table_data=false;
+							
+
+                        return false; //阻止表单跳转。如果需要表单跳转，去掉这段即可。
+                    });
+
+                //初始化时全部为Input输入框而不是选择框  将input框放入正确的位置
+                function initInput() {
+                    for (var i = 1; i < 7; i++) {
+                        var inputstr = '<input type="text" name="V' + i + '" placeholder="值" autocomplete="on" class="layui-input " />';
+                        $('#divV' + i).html(inputstr);
+                    }
+                }
+                //根据更新为Select下拉框 参数 C1为当前选 项配置 ptype为选择的类型
+                //index  从1开始 表示 V1 ,V2
+                function fillSelect(values, index) {
+                    console.log(values);
+                    if (values && values.length) {
+                        for (var i = 0; i < values.length; i++) {
+                            var inputstr = '<select name ="V' + index + '" lay-search="" ><option value=""></option></select>';
+                            $('#divV' + index).html(inputstr);
+
+                            values
+                                .forEach(function(value, idx,
+                                    ar) {
+                                    if (value.trim()) {
+                                        $(
+                                                'select[name="V' +
+                                                index +
+                                                '"]')
+                                            .append(
+                                                '<option value="' +
+                                                value
+                                                .trim() +
+                                                '">' +
+                                                value
+                                                .trim() +
+                                                '</option>')
+                                    }
+                                })
+
+                        }
+                    }
+
+                }
+
+                //下面点击table排序
+                table.on('sort(test)', function(obj){ //注：tool是工具条事件名，test是table原始容器的属性 lay-filter="对应的值"
+					 /*  console.log(obj.field); //当前排序的字段名
+					  console.log(obj.type); //当前排序类型：desc（降序）、asc（升序）、null（空对象，默认排序）
+					  conso le.log(this);   *///当前排序的 th 对象 
+					 var fd = new FormData(document.querySelector("form#queryForm")); 
+					 //生成where 
+					 var swhere={}
+					   for(let item of fd.entries()) //item[0]是键， item[1]是值
+						 {
+						   if(item[1].trim()!="")
+						   {swhere[item[0]]=item[1];}						   
+						 }  
+					 swhere.ascField="";
+					 swhere.descField="";//先清空
+					 if(obj.type=='asc')
+						{swhere.ascField=obj.field} 
+					 else if(obj.type='desc'){
+						 swhere.descField=obj.field
+					 }
+				 
+					 if (fd.get('nwx') &&
+	                            fd.get('producttype') &&
+	                            fd.get('productdtl')) {
+	                            swhere.FNumber = fd.get('nwx') +
+	                                '.' +
+	                                fd.get('producttype') +
+	                                '.' +
+	                                fd.get('productdtl')
+	                        }
+					
+					// console.log(window.newcols);
+					 // console.log('swhere',swhere);
+ 
+				  	 swhere.datasource=datasource;
+				  	table.reload('demo', {
+				  		//url:'/query/page2',
+				    	initSort: obj, //记录初始排序，如果不设的话，将无法标记表头的排序状态。 layui 2.1.1 新增参数
+				    	where:  swhere,
+				    	cols:window.newcols
+				  });
+				});   
+            
+             form.on('select(dsSel)',function(data){
+            	 switch(data.value){
+            	 case "1": datasource="master";break;
+            	 case "2":datasource="db1";break;
+            	 case "3":datasource="db2";break;
+            	 default:
+            		 datasource="master";
+            		 
+            	 }           		 
+            	 
+            	 
+             })   
+              
+
+            });
+        
+        function jumppartshow(fnumber,datasource){
+        	 
+        	layer.open({
+        		 type: 2, 
+        		  skin: 'layui-layer-rim', //加上边框
+        		  title:'物料-'+fnumber,
+        		  area: ['900px', '660px'], //宽高
+        		  content: '/query/show?fnumber='+fnumber+'&datasource='+datasource 
+        	})
+     
+			
+		}	
+        </script>
+</body>
+
+</html>

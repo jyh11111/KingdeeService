@@ -1,0 +1,3 @@
+SY:  F_107  : E8 P/N  F_108: E10P/N  F_105 供应商名称
+MC: F_108 :  E8 P/N  F_109: E10P/N    F_106: SupplyName
+VG: F_115  : E8 P/N  F_116:E10P/N  F_114:SupplyName
