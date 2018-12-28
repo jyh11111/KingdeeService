@@ -17,7 +17,7 @@ spring:
           #data: classpath:db/data-h2.sql
           url: jdbc:sqlserver://192.168.1.114:1433;database=AIS20161208122115;integratedSecurity=false
           username: sa
-          password: 请修改
+          password: 请修改v
         db1: #SY正式数据库AIS20161208124844  
           driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver        
           url: jdbc:sqlserver://192.168.1.112:1433;database=AIS20161208124844;integratedSecurity=false
